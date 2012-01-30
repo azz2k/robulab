@@ -15,14 +15,15 @@ private:
 
   
 public:
-  DirectoryClient(Pure::UdpTransport& server)
+  DirectoryClient(Pure::UdpTransport& server, Pure::UInt16 instance = 0x00)
     : 
     server(server)
   {
 
+    // request the list of all registered services
     Pure::Request request;
     request.Action = Pure::Request::Get;
-    request.Target = 0x00;
+    request.Target = instance;
 
     if(server.request(request))
     {
@@ -33,7 +34,7 @@ public:
 
         Pure::Request requestA;
         requestA.Action = Pure::Request::Query;
-        requestA.Target = 0x00;
+        requestA.Target = instance;
 
         while(request.response.Data.Size() > 0)
         {

@@ -2,13 +2,13 @@
 
 */
 
-#ifndef _USClient_h_
-#define _USClient_h_
+#ifndef _TelemeterClient_h_
+#define _TelemeterClient_h_
 
 #include "UdpTransport.h"
 #include <vector>
 
-class USClient
+class TelemeterClient
 {
 public:
   struct Pose2D
@@ -28,7 +28,7 @@ public:
 
 public:
 
-  USClient(Pure::UdpTransport& server, Pure::UInt16 instance)
+  TelemeterClient(Pure::UdpTransport& server, Pure::UInt16 instance)
     : 
     server(server)
   {
@@ -44,7 +44,7 @@ public:
     server.subscribe(instance, 0x00, subscription);
   }
 
-  ~USClient()
+  ~TelemeterClient()
   {
   }
 
@@ -118,7 +118,7 @@ public:
     int idx = 0;
     Pure::Float32 minDist = measurements[0];
 
-    for(int i = 1; i < measurements.size(); i++)
+    for(unsigned int i = 1; i < measurements.size(); i++)
     {
       if(measurements[i] < minDist)
       {
@@ -131,4 +131,4 @@ public:
 
 };
 
-#endif // _USClient_h_
+#endif // _TelemeterClient_h_

@@ -18,7 +18,7 @@
 
 #include "Clients/DirectoryClient.h"
 #include "Clients/DifferentialDriveClient.h"
-#include "Clients/USClient.h"
+#include "Clients/TelemeterClient.h"
 
 
 class DirectoryRequest : public StateRequest
@@ -84,6 +84,19 @@ public:
   }//end handle_message
 };
 
+// TODO: make it config
+static const Pure::UInt16 DirectoryID    = 0;
+static const Pure::UInt16 NotificationID = 1;
+static const Pure::UInt16 IOID           = 2;
+static const Pure::UInt16 DifferentialID = 3;
+static const Pure::UInt16 LaserID        = 4;
+static const Pure::UInt16 LocalizationID = 5;
+static const Pure::UInt16 InfraredID     = 6;
+static const Pure::UInt16 UltrasoundID   = 7;
+static const Pure::UInt16 DriveID        = 8;
+static const Pure::UInt16 DiagnosticID   = 9;
+static const Pure::UInt16 BatteryID      = 10;
+static const Pure::UInt16 TrajectoryID   = 11;
 
 
 int main(int argc, char** argv)
@@ -94,8 +107,8 @@ int main(int argc, char** argv)
   
   DirectoryClient directoryClient(server);
   
-  DifferentialDriveClient differentialDriveClient(server, 3);
-  USClient usClient(server, 6);
+  DifferentialDriveClient differentialDriveClient(server, DifferentialID);
+  TelemeterClient usClient(server, UltrasoundID);
 
   //SimpleNotificationHandler s;
   //server.register_notificationHandler(s, 3);

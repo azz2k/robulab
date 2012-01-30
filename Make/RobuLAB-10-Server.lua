@@ -5,12 +5,8 @@ project "RobuLABServer"
   files{ "../Source/**.cpp", "../Source/**.h"}
 
   includedirs {
-	"../Source/",
-	"../../Extern/include/",
-	"../../Extern/include/glib-2.0/",
-	"../../Extern/lib/glib-2.0/include/"}
-
-  libdirs {"../../Extern/lib/"}
+	"../Source/"
+  }
 
   links {
     "glib-2.0",
