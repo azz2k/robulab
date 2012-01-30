@@ -11,17 +11,22 @@ solution "RobuLABServer"
   end
 
   includedirs {
-     "../Extern/include/",
-     "../Extern/include/glib-2.0/",
-     "../Extern/lib/glib-2.0/include/"
+     "../../Extern/include/",
+     "../../Extern/include/glib-2.0/",
+     "../../Extern/lib/glib-2.0/include/"
   }
   
-  libdirs {"../Extern/lib/"}
+  libdirs {"../../Extern/lib/"}
   
    -- debug configuration
   configuration { "Debug" }
 	defines { "DEBUG" }
 	flags { "Symbols" }
+	
+  links {
+    "glib-2.0",
+	"gio-2.0",
+	"gobject-2.0"}
 	
   -- store the makefiles the Make/ directory
   location "."
