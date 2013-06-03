@@ -1,3 +1,7 @@
+dofile ("../../Utils/Lua/qtcreator.lua")
+dofile ("../../Utils/Lua/qtcreator_2.7+.lua")
+
+
 solution "RobuLABServer"	  
   platforms {"Native"}
   configurations {"Debug","Release"}
