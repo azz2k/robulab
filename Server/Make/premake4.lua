@@ -16,7 +16,9 @@ solution "RobuLABServer"
      "../../Extern/lib/glib-2.0/include/"
   }
   
-  libdirs {"../../Extern/lib/"}
+  libdirs {
+	"../../Extern/lib/"
+	}
   
    -- debug configuration
   configuration { "Debug" }
@@ -29,7 +31,7 @@ solution "RobuLABServer"
 	"gobject-2.0"}
 	
   -- store the makefiles the Make/ directory
-  location "."
+  location "../build"
   
   
   -- add projects
