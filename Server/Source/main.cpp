@@ -102,55 +102,64 @@ static const Pure::UInt16 TrajectoryID   = 11;
 int main(int argc, char** argv)
 {
  
+  // initialize the communication server
   Pure::UdpTransport server;
 
-  
+  //
   DirectoryClient directoryClient(server);
   
-  DifferentialDriveClient differentialDriveClient(server, DifferentialID);
+  // register the US sensor
   TelemeterClient usClient(server, UltrasoundID);
 
+  // register the IR sensor
+  TelemeterClient irClient(server, InfraredID);
+
+  // register the drive actuator
+  DifferentialDriveClient differentialDriveClient(server, DifferentialID);
+  
+
   //SimpleNotificationHandler s;
-  //server.register_notificationHandler(s, 3);
+  //server.register_notificationHandler(s, DifferentialID);
 
   //DifferentialDriveRequest dr;
   //server.request(dr);
-  
-  int cycle = 11;
-  float t = 0;
 
-  int cycles = 0;
-  while(cycles < 30000)
+
+  // run behavior :)
+  while(true)
   {
-    cycles++;
-    
-    
-
-
-    usClient.execute();
-
+    // motion commands
     Pure::Float32 rot = 0;
     Pure::Float32 speed = 0;
 
+
+    // read sensory input
+    usClient.execute();
+
+    // get the US sensor with the closest measured distance
     int idx = usClient.getMinDistanceIdx();
-    if(idx != -1 && usClient.measurements[idx] < 1.0)
+
+    // if the distance is closer than 1m
+    if(idx != -1 && usClient.measurements[idx] < 1)
     {
+      // rotate towards the closest object
+      // i.e., towards the sensor which did measure the closest distance
       rot = usClient.properties[idx].pose.rotation;
       
+      // if the closest object is in front
+      // approch it with the distance of 0.5m
       if(std::fabs(rot) < 0.5)
       {
-        speed = usClient.measurements[idx]-0.5;
+        speed = usClient.measurements[idx] - 0.5f;
       }
-    }
-    
+    }//end if
     
 
+    // set the actuators
     differentialDriveClient.setSpeed(true, speed, rot);
-    //t += cycle/1000.0f;
-    //differentialDriveClient.setSpeed(true, 0.0f, std::sin(t*3.14f*2.0f*4.0f));
-    
     differentialDriveClient.execute();
 
+    // wait for 0.1s = 100ms
     g_usleep(100000);
   }//end while
   

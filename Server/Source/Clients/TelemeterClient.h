@@ -120,7 +120,8 @@ public:
 
     for(unsigned int i = 1; i < measurements.size(); i++)
     {
-      if(measurements[i] < minDist)
+      // HACK: ignore measurements closer than 10cm, due to a broken sensor
+      if(measurements[i] > 0.1f && measurements[i] < minDist)
       {
         minDist = measurements[i];
         idx = i;
