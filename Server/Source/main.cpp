@@ -20,6 +20,7 @@
 #include "Clients/DirectoryClient.h"
 #include "Clients/DifferentialDriveClient.h"
 #include "Clients/TelemeterClient.h"
+#include "Clients/LocalizationClient.h"
 
 
 class DirectoryRequest : public StateRequest
@@ -99,33 +100,84 @@ static const Pure::UInt16 DiagnosticID   = 9;
 static const Pure::UInt16 BatteryID      = 10;
 static const Pure::UInt16 TrajectoryID   = 11;
 
+class Robot
+{
+  public:
+    Robot()
+    {
+      // initialize the communication server
+      server = new Pure::UdpTransport;
+      // register the directory client
+      directoryClient = new DirectoryClient(*server);
+      // register the US sensor
+      usClient = new TelemeterClient(*server, UltrasoundID);
+      // register the IR sensor
+      irClient = new TelemeterClient(*server, InfraredID);
+      // register the drive actuator
+      differentialDriveClient = new DifferentialDriveClient(*server, DifferentialID);
+      // register the localization client
+      localizationClient = new LocalizationClient(*server, LocalizationID);
+    }
+
+    ~Robot () {} //todo: delete stuff
+  private:
+    Pure::UdpTransport *server;
+    DirectoryClient *directoryClient;
+    TelemeterClient *usClient;
+    TelemeterClient *irClient;
+    DifferentialDriveClient *differentialDriveClient;
+    LocalizationClient *localizationClient;
+  public:
+    void move_rot(double drot0, double vrot_abs)
+    {
+      double drot = drot0;
+      double x0, y0, rot0;
+      double x, y, rot;
+      
+      localizationClient->localize();
+      localizationClient->getCurrentPose(x0, y0, rot0);
+      x = x0;
+      y = y0;
+      rot = rot0;
+   
+      while(fabs(rot-rot0 - drot0) > 1e-3)
+      {
+        double vrot = vrot_abs*drot/fabs(drot);
+        differentialDriveClient->setSpeed(true, 0.0, vrot);
+        differentialDriveClient->execute();
+        g_usleep(drot/vrot*100000);
+        
+        localizationClient->localize();
+        localizationClient->getCurrentPose(x, y, rot);
+        drot = rot0 + drot0 - rot;
+        std::cout << "rot " << drot0 << " " << drot << " " << rot-rot0 << std::endl;
+      }
+      differentialDriveClient->setSpeed(false, 0.0, 0.0);
+      differentialDriveClient->execute();
+
+      localizationClient->localize();
+      localizationClient->getCurrentPose(x, y, rot);
+      std::cout << "rot " << drot0 << " " << rot-rot0 << std::endl;
+    }
+};
 
 int main(int argc, char** argv)
 {
- 
-  // initialize the communication server
+  Robot robot;
+  robot.move_rot(-0.5, 0.5);
+/*  // initialize the communication server
   Pure::UdpTransport server;
-
-  //
+  // register the directory client
   DirectoryClient directoryClient(server);
-  
   // register the US sensor
   TelemeterClient usClient(server, UltrasoundID);
-
   // register the IR sensor
   TelemeterClient irClient(server, InfraredID);
-
   // register the drive actuator
   DifferentialDriveClient differentialDriveClient(server, DifferentialID);
-  
-
-  //SimpleNotificationHandler s;
-  //server.register_notificationHandler(s, DifferentialID);
-
-  //DifferentialDriveRequest dr;
-  //server.request(dr);
-
-
+  // register the localization client
+  LocalizationClient localizationClient(server, LocalizationID);
+ 
   // run behavior :)
   while(true)
   {
@@ -162,6 +214,6 @@ int main(int argc, char** argv)
 
     // wait for 0.1s = 100ms
     g_usleep(100000);
-  }//end while
+  }//end while */
   
 }//end main
