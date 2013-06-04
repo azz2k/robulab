@@ -11,6 +11,8 @@
 
 #include <assert.h>
 #include "BasicTypes.h"
+#include <cstring>
+#include <stdexcept>
 
 namespace Pure
 {

@@ -5,13 +5,14 @@
 #else
   #include <unistd.h>
   #include <fcntl.h>
-  #include "myconio.h"
+//  #include "myconio.h"
 #endif //WIN32
 
 
 #include <string>
 #include <iostream>
-
+#include <stdio.h>
+#include <cmath>
 
 #include "UdpTransport.h"
 

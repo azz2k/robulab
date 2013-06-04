@@ -14,14 +14,22 @@ solution "RobuLABServer"
 	links {"ws2_32"}
   end
 
+  buildoptions {
+    "$(shell pkg-config --cflags glib-2.0)"
+  }
+  
+  linkoptions {
+    "$(shell pkg-config --libs glib-2.0)"
+  }
+
   includedirs {
-     "../../Extern/include/",
-     "../../Extern/include/glib-2.0/",
-     "../../Extern/lib/glib-2.0/include/"
+     "/usr/include/",
+     "/usr/include/glib-2.0/",
+     "/usr/lib/glib-2.0/include/"
   }
   
   libdirs {
-	"../../Extern/lib/"
+	"/usr/lib/"
 	}
   
    -- debug configuration
