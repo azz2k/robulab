@@ -131,6 +131,7 @@ class Robot
     void move_rot(double drot0, double vrot_abs)
     {
       double drot = drot0;
+      double vrot = vrot_abs*drot/fabs(drot);
       double x0, y0, rot0;
       double x, y, rot;
       
@@ -140,13 +141,30 @@ class Robot
       y = y0;
       rot = rot0;
    
-      while(fabs(rot-rot0 - drot0) > 1e-3)
+      double interval = 50000.0;
+      double precision = 1e-3;
+      while(fabs(rot-rot0 - drot0) > precision)
       {
-        double vrot = vrot_abs*drot/fabs(drot);
+        vrot = vrot_abs*drot/fabs(drot);
+        if(fabs(drot) < 80.0*precision)
+          vrot = vrot_abs*drot/fabs(drot)/2.0;
+        if(fabs(drot) < 40.0*precision)
+          vrot = vrot_abs*drot/fabs(drot)/4.0;
+        if(fabs(drot) < 20.0*precision)
+          vrot = vrot_abs*drot/fabs(drot)/8.0;
+        if(fabs(drot) < 10.0*precision)
+          vrot = vrot_abs*drot/fabs(drot)/16.0;
+        if(fabs(drot) < 5.0*precision)
+          vrot = vrot_abs*drot/fabs(drot)/32.0;
+        if(fabs(drot) < 2.0*precision)
+          vrot = vrot_abs*drot/fabs(drot)/64.0;
+        std::cout << vrot << std::endl;
         differentialDriveClient->setSpeed(true, 0.0, vrot);
         differentialDriveClient->execute();
-        g_usleep(drot/vrot*100000);
-        
+        if(drot/vrot > interval / 1000000.0)
+          g_usleep(interval);
+        else
+          g_usleep(drot/vrot * 1000000.0);
         localizationClient->execute();
         localizationClient->getCurrentPose(x, y, rot);
         drot = rot0 + drot0 - rot;
@@ -164,7 +182,8 @@ class Robot
 int main(int argc, char** argv)
 {
   Robot robot;
-  robot.move_rot(-0.3, 0.2);
+  robot.move_rot(-0.5, 0.5);
+  robot.move_rot(0.5, 0.5);
 /*  // initialize the communication server
   Pure::UdpTransport server;
   // register the directory client
