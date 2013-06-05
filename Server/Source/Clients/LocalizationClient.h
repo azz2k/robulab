@@ -34,7 +34,7 @@ public:
       parse_properties(request.response);
     }//end if
 
-    server.subscribe(instance, 0x00, subscription);
+    server.subscribe(instance, 1, subscription);
   }
 
   ~LocalizationClient()
@@ -45,7 +45,6 @@ public:
   {
     while(!subscription.empty())
     {
-      std::cout << "got a notification" << std::endl;
       Pure::Notification n = subscription.front();
       handle_notification(n);
       subscription.pop();
