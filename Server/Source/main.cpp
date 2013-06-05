@@ -23,7 +23,7 @@
 #include "Clients/LocalizationClient.h"
 
 
-class DirectoryRequest : public StateRequest
+/*class DirectoryRequest : public StateRequest
 {
 public:
   // Directory Service is by default at 0
@@ -84,7 +84,7 @@ public:
     }
     std::cout << std::endl;
   }//end handle_message
-};
+};*/
 
 // TODO: make it config
 static const Pure::UInt16 DirectoryID    = 0;
@@ -134,7 +134,7 @@ class Robot
       double x0, y0, rot0;
       double x, y, rot;
       
-      localizationClient->localize();
+      localizationClient->execute();
       localizationClient->getCurrentPose(x0, y0, rot0);
       x = x0;
       y = y0;
@@ -147,7 +147,7 @@ class Robot
         differentialDriveClient->execute();
         g_usleep(drot/vrot*100000);
         
-        localizationClient->localize();
+        localizationClient->execute();
         localizationClient->getCurrentPose(x, y, rot);
         drot = rot0 + drot0 - rot;
         std::cout << "rot " << drot0 << " " << drot << " " << rot-rot0 << std::endl;
@@ -155,7 +155,7 @@ class Robot
       differentialDriveClient->setSpeed(false, 0.0, 0.0);
       differentialDriveClient->execute();
 
-      localizationClient->localize();
+      localizationClient->execute();
       localizationClient->getCurrentPose(x, y, rot);
       std::cout << "rot " << drot0 << " " << rot-rot0 << std::endl;
     }
@@ -164,7 +164,7 @@ class Robot
 int main(int argc, char** argv)
 {
   Robot robot;
-  robot.move_rot(-0.5, 0.5);
+  robot.move_rot(-0.3, 0.2);
 /*  // initialize the communication server
   Pure::UdpTransport server;
   // register the directory client
