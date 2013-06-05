@@ -177,13 +177,86 @@ class Robot
       localizationClient->getCurrentPose(x, y, rot);
       std::cout << "rot " << drot0 << " " << rot-rot0 << std::endl;
     }
+    
+    void move_trans(double dr, double v_abs)
+    {
+      double dr0 = dr;
+      double v = v_abs*dr/fabs(dr);
+      double x0, y0, rot0, r0;
+      double x, y, rot, r;
+      double offset = 0.0;
+      
+      localizationClient->execute();
+      localizationClient->getCurrentPose(x0, y0, rot0);
+      // this is needed because of the symmetry of r around the origin
+      if(fabs(x0) < 100.0 or fabs(y0) < 100.0) 
+        offset = 200.0;
+      x0 += offset;
+      y0 += offset;
+      r0 = sqrt(x0*x0+y0*y0);
+      x = x0;
+      y = y0;
+      rot = rot0;
+      r = r0;
+   
+      double interval = 50000.0;
+      double precision = 1e-3;
+      while(fabs(r-r0 - dr0) > precision)
+      {
+        v = v_abs*dr/fabs(dr);
+        if(fabs(dr) < 80.0*precision)
+          v = v_abs*dr/fabs(dr)/2.0;
+        if(fabs(dr) < 40.0*precision)
+          v = v_abs*dr/fabs(dr)/4.0;
+        if(fabs(dr) < 20.0*precision)
+          v = v_abs*dr/fabs(dr)/8.0;
+        if(fabs(dr) < 10.0*precision)
+          v = v_abs*dr/fabs(dr)/16.0;
+        if(fabs(dr) < 5.0*precision)
+          v = v_abs*dr/fabs(dr)/32.0;
+        if(fabs(dr) < 2.0*precision)
+          v = v_abs*dr/fabs(dr)/64.0;
+        std::cout << v << std::endl;
+        differentialDriveClient->setSpeed(true, v, 0.0);
+        differentialDriveClient->execute();
+        if(dr/v > interval / 1000000.0)
+          g_usleep(interval);
+        else
+          g_usleep(dr/v * 1000000.0);
+        localizationClient->execute();
+        localizationClient->getCurrentPose(x, y, rot);
+        x += offset;
+        y += offset;
+        r = sqrt(x*x+y*y);
+        dr = r0 + dr0 - r;
+        std::cout 
+          << "r " << r 
+          << " r0 " << r0
+          << " r-r0 " << r-r0
+          << " dr " << dr
+          << " dr0 " << dr0 
+          << std::endl;
+      }
+      differentialDriveClient->setSpeed(false, 0.0, 0.0);
+      differentialDriveClient->execute();
+
+      localizationClient->execute();
+      localizationClient->getCurrentPose(x, y, rot);
+      x += offset;
+      y += offset;
+      r = sqrt(x*x+y*y);
+      std::cout << "dr " << dr0 << " " << r0-r << std::endl;
+    }
 };
 
 int main(int argc, char** argv)
 {
   Robot robot;
-  robot.move_rot(-0.5, 0.5);
-  robot.move_rot(0.5, 0.5);
+  for(int i = 0; i < 10; i++)
+  {
+    robot.move_trans(0.5, 0.5);
+    robot.move_trans(-0.5, 0.5);
+  }
 /*  // initialize the communication server
   Pure::UdpTransport server;
   // register the directory client
