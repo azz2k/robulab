@@ -68,7 +68,6 @@ void UdpTransport::mainConnection()
 
       UInt16 target = *((UInt16*)&read_buffer[1]);
 
-
       g_mutex_lock(m_lock);
 
       std::map<UInt16, Subscription*>::iterator iter = subscriptionMap.find(target);

@@ -191,7 +191,7 @@ struct Subscription
 // that will handle incoming UDP messages from PURE.
 // It is implemented in UdpTransport.RxHandler.
 
-// The public methods give access to the PURE protocom functionalities.
+// The public methods give access to the PURE protocol functionalities.
 // Typically, a client will first execute a GET request using
 // UdpTransport.SendRequest, to retreive the properties of the service.
 // It will then use Subscribe to enable notification messages from PURE.
