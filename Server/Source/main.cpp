@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 
 #ifdef  WIN32
   #include <windows.h>
@@ -128,6 +129,10 @@ class Robot
     DifferentialDriveClient *differentialDriveClient;
     LocalizationClient *localizationClient;
   public:
+    template <typename T> int sgn(T val)
+    {
+      return (T(0) < val) - (val < T(0));
+    }
     void move_rot(double drot0, double vrot_abs)
     {
       double drot = drot0;
@@ -178,84 +183,70 @@ class Robot
       std::cout << "rot " << drot0 << " " << rot-rot0 << std::endl;
     }
     
-    void move_trans(double dr, double v_abs)
+    void move_trans(double dr0, double v_abs)
     {
-      double dr0 = dr;
-      double v = v_abs*dr/fabs(dr);
-      double x0, y0, rot0, r0;
-      double x, y, rot, r;
-      double offset = 0.0;
+      double r = 0.0;
+      double dr = fabs(dr0) - r;
+      double v = v_abs*sgn(dr0);
+      double x0, y0, rot0;
+      double x, y, rot;
       
       localizationClient->execute();
       localizationClient->getCurrentPose(x0, y0, rot0);
-      // this is needed because of the symmetry of r around the origin
-      if(fabs(x0) < 100.0 or fabs(y0) < 100.0) 
-        offset = 200.0;
-      x0 += offset;
-      y0 += offset;
-      r0 = sqrt(x0*x0+y0*y0);
       x = x0;
       y = y0;
       rot = rot0;
-      r = r0;
    
       double interval = 50000.0;
       double precision = 1e-3;
-      while(fabs(r-r0 - dr0) > precision)
+      while(fabs(r - fabs(dr0)) > precision)
       {
-        v = v_abs*dr/fabs(dr);
-        if(fabs(dr) < 80.0*precision)
-          v = v_abs*dr/fabs(dr)/2.0;
-        if(fabs(dr) < 40.0*precision)
-          v = v_abs*dr/fabs(dr)/4.0;
-        if(fabs(dr) < 20.0*precision)
-          v = v_abs*dr/fabs(dr)/8.0;
-        if(fabs(dr) < 10.0*precision)
-          v = v_abs*dr/fabs(dr)/16.0;
-        if(fabs(dr) < 5.0*precision)
-          v = v_abs*dr/fabs(dr)/32.0;
-        if(fabs(dr) < 2.0*precision)
-          v = v_abs*dr/fabs(dr)/64.0;
-        std::cout << v << std::endl;
+        std::cout << "foo" << std::endl;
+        v = v_abs*sgn(dr)*sgn(dr0);
+        if(fabs(dr0) < 80.0*precision)
+          v /=2.0;
+        if(fabs(dr0) < 40.0*precision)
+          v /=4.0;
+        if(fabs(dr0) < 20.0*precision)
+          v /=8.0;
+        if(fabs(dr0) < 10.0*precision)
+          v /=16.0;
+        if(fabs(dr0) < 5.0*precision)
+          v /=32.0;
+        if(fabs(dr0) < 2.0*precision)
+          v /=64.0;
         differentialDriveClient->setSpeed(true, v, 0.0);
         differentialDriveClient->execute();
-        if(dr/v > interval / 1000000.0)
+        if(fabs(dr/v) > interval / 1000000.0)
           g_usleep(interval);
         else
-          g_usleep(dr/v * 1000000.0);
+          g_usleep(fabs(dr/v) * 1000000.0);
         localizationClient->execute();
         localizationClient->getCurrentPose(x, y, rot);
-        x += offset;
-        y += offset;
-        r = sqrt(x*x+y*y);
-        dr = r0 + dr0 - r;
+        r = sqrt((x-x0)*(x-x0)+(y-y0)*(y-y0));
+        dr = fabs(dr0) - r;
         std::cout 
-          << "r " << r 
-          << " r0 " << r0
-          << " r-r0 " << r-r0
+          << "dr0 " << dr0 
+          << " r " << r 
           << " dr " << dr
-          << " dr0 " << dr0 
+          << " v " << v
           << std::endl;
       }
       differentialDriveClient->setSpeed(false, 0.0, 0.0);
       differentialDriveClient->execute();
-
-      localizationClient->execute();
-      localizationClient->getCurrentPose(x, y, rot);
-      x += offset;
-      y += offset;
-      r = sqrt(x*x+y*y);
-      std::cout << "dr " << dr0 << " " << r0-r << std::endl;
     }
 };
 
 int main(int argc, char** argv)
 {
   Robot robot;
-  for(int i = 0; i < 10; i++)
+
+  for(int i = 0; i < 4; i++)
   {
-    robot.move_trans(0.5, 0.5);
-    robot.move_trans(-0.5, 0.5);
+    robot.move_trans(0.5, 0.2);
+    g_usleep(2000000);
+    robot.move_trans(-0.5, 0.2);
+    robot.move_rot(M_PI/2.0, 0.5);
   }
 /*  // initialize the communication server
   Pure::UdpTransport server;
