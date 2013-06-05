@@ -150,19 +150,19 @@ class Robot
       double precision = 1e-3;
       while(fabs(rot-rot0 - drot0) > precision)
       {
-        vrot = vrot_abs*drot/fabs(drot);
+        vrot = vrot_abs*sgn(drot);
         if(fabs(drot) < 80.0*precision)
-          vrot = vrot_abs*drot/fabs(drot)/2.0;
+          vrot /=2.0;
         if(fabs(drot) < 40.0*precision)
-          vrot = vrot_abs*drot/fabs(drot)/4.0;
+          vrot /=4.0;
         if(fabs(drot) < 20.0*precision)
-          vrot = vrot_abs*drot/fabs(drot)/8.0;
+          vrot /=8.0;
         if(fabs(drot) < 10.0*precision)
-          vrot = vrot_abs*drot/fabs(drot)/16.0;
+          vrot /=16.0;
         if(fabs(drot) < 5.0*precision)
-          vrot = vrot_abs*drot/fabs(drot)/32.0;
+          vrot /=32.0;
         if(fabs(drot) < 2.0*precision)
-          vrot = vrot_abs*drot/fabs(drot)/64.0;
+          vrot /=64.0;
         std::cout << vrot << std::endl;
         differentialDriveClient->setSpeed(true, 0.0, vrot);
         differentialDriveClient->execute();
@@ -173,14 +173,17 @@ class Robot
         localizationClient->execute();
         localizationClient->getCurrentPose(x, y, rot);
         drot = rot0 + drot0 - rot;
-        std::cout << "rot " << drot0 << " " << drot << " " << rot-rot0 << std::endl;
+        std::cout 
+          << "drot0 " << drot0 
+          << " rot0 " << rot0 
+          << " rot " << rot 
+          << " rot0-rot " << rot0-rot 
+          << " drot " << drot
+          << " vrot " << vrot
+          << std::endl;
       }
       differentialDriveClient->setSpeed(false, 0.0, 0.0);
       differentialDriveClient->execute();
-
-      localizationClient->execute();
-      localizationClient->getCurrentPose(x, y, rot);
-      std::cout << "rot " << drot0 << " " << rot-rot0 << std::endl;
     }
     
     void move_trans(double dr0, double v_abs)
