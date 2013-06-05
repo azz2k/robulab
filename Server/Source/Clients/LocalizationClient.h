@@ -34,7 +34,7 @@ public:
       parse_properties(request.response);
     }//end if
 
-    server.subscribe(instance, 1, subscription);
+    server.subscribe(instance, 0, subscription);
   }
 
   ~LocalizationClient()
