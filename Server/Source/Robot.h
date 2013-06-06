@@ -69,7 +69,7 @@ class Robot
     void move_rot(double drot0, double vrot_abs)
     {
       double drot = drot0;
-      double vrot = vrot_abs*drot/fabs(drot);
+      double vrot = vrot_abs*sgn(drot);
       double x0, y0, rot0;
       double x, y, rot;
       
@@ -84,19 +84,8 @@ class Robot
       while(fabs(rot-rot0 - drot0) > precision)
       {
         vrot = vrot_abs*sgn(drot);
-        if(fabs(drot) < 80.0*precision)
-          vrot /=2.0;
-        if(fabs(drot) < 40.0*precision)
-          vrot /=4.0;
-        if(fabs(drot) < 20.0*precision)
-          vrot /=8.0;
-        if(fabs(drot) < 10.0*precision)
-          vrot /=16.0;
-        if(fabs(drot) < 5.0*precision)
-          vrot /=32.0;
-        if(fabs(drot) < 2.0*precision)
-          vrot /=64.0;
-        std::cout << vrot << std::endl;
+        if(fabs(drot) < 64.0*precision)
+          vrot /= fmin(16.0, pow(2.0, 7-log(fabs(drot))/log(2.0)));
         differentialDriveClient->setSpeed(true, 0.0, vrot);
         differentialDriveClient->execute();
         if(drot/vrot > interval / 1000000.0)
@@ -139,18 +128,8 @@ class Robot
       {
         std::cout << "foo" << std::endl;
         v = v_abs*sgn(dr)*sgn(dr0);
-        if(fabs(dr0) < 80.0*precision)
-          v /=2.0;
-        if(fabs(dr0) < 40.0*precision)
-          v /=4.0;
-        if(fabs(dr0) < 20.0*precision)
-          v /=8.0;
-        if(fabs(dr0) < 10.0*precision)
-          v /=16.0;
-        if(fabs(dr0) < 5.0*precision)
-          v /=32.0;
-        if(fabs(dr0) < 2.0*precision)
-          v /=64.0;
+        if(fabs(dr) < 64.0*precision)
+          v /= fmin(16.0, pow(2.0, 7-log(fabs(dr))/log(2.0)));
         differentialDriveClient->setSpeed(true, v, 0.0);
         differentialDriveClient->execute();
         if(fabs(dr/v) > interval / 1000000.0)
