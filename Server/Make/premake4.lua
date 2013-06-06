@@ -17,6 +17,7 @@ solution "RobuLABServer"
   buildoptions {
     "$(shell pkg-config --cflags glib-2.0)"
   }
+
   
   linkoptions {
     "$(shell pkg-config --libs glib-2.0)"
