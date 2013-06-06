@@ -1,5 +1,7 @@
 from ctypes import cdll
 import ctypes
+import math
+import time
 
 lib = cdll.LoadLibrary('../../Server/dist/libRobuLABLib.so')
 
@@ -13,5 +15,10 @@ class Robot(object):
 
 if __name__ == "__main__":
   robot = Robot()
-  robot.move_rot(0.2, 0.1)
-  robot.move_rot(-0.2, 0.1)
+  robot.move_trans(0.2, 0.2)
+  time.sleep(3.0)
+  robot.move_trans(-0.2, 0.2)
+  time.sleep(3.0)
+  robot.move_rot(math.pi/2.0, 0.5)
+  time.sleep(3.0)
+  robot.move_rot(-math.pi/2.0, 0.5)
