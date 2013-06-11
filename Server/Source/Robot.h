@@ -126,7 +126,6 @@ class Robot
       double precision = 1e-3;
       while(fabs(r - fabs(dr0)) > precision)
       {
-        std::cout << "foo" << std::endl;
         v = v_abs*sgn(dr)*sgn(dr0);
         if(fabs(dr) < 64.0*precision)
           v /= fmin(16.0, pow(2.0, 7-log(fabs(dr))/log(2.0)));
