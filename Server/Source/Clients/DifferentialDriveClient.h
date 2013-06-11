@@ -86,8 +86,8 @@ public:
     }//end while
 
     std::cout << status.timestamp << ": ";
-    std::cout << "LinearSpeed " << status.CurrentLinearSpeed;
-    std::cout << "AngularSpeed " << status.CurrentAngularSpeed;
+    std::cout << " LinearSpeed " << status.CurrentLinearSpeed;
+    std::cout << " AngularSpeed " << status.CurrentAngularSpeed;
     std::cout << std::endl;
 
   }//end execute
