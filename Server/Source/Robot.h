@@ -70,7 +70,7 @@ class Robot
     void setSpeed(bool move, double vtrans, double vrot)
     {
       differentialDriveClient->setSpeed(move, vtrans, vrot);
-        differentialDriveClient->execute();
+      differentialDriveClient->execute();
     }
     void getCurrentPose(double &x, double &y, double &rot)
     {
