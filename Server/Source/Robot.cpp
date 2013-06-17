@@ -15,4 +15,13 @@ extern "C" {
   { 
     robot->move_trans(dr0, v_abs);
   }
+  
+  void Robot_setSpeed(Robot* robot, bool move, double vtrans, double vrot)
+  {
+    robot->setSpeed(move, vtrans, vrot);
+  }
+  void Robot_getCurrentPose(Robot* robot,double &x, double &y, double &rot)
+  {
+    robot->getCurrentPose(x, y, rot);
+  }
 }

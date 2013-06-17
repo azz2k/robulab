@@ -66,6 +66,15 @@ class Robot
     {
       return (T(0) < val) - (val < T(0));
     }
+    
+    void setSpeed(bool move, double vtrans, double vrot)
+    {
+      differentialDriveClient->setSpeed(move, vtrans, vrot);
+    }
+    void getCurrentPose(double &x, double &y, double &rot)
+    {
+      localizationClient->getCurrentPose(x, y, rot);
+    }
     void move_rot(double drot0, double vrot_abs)
     {
       double drot = drot0;
