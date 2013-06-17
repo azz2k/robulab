@@ -74,6 +74,7 @@ class Robot
     }
     void getCurrentPose(double &x, double &y, double &rot)
     {
+      localizationClient->execute(); // process all messages
       localizationClient->getCurrentPose(x, y, rot);
     }
     void move_rot(double drot0, double vrot_abs)
