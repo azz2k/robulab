@@ -28,4 +28,8 @@ extern "C" {
   {
     robot->getMinDistanceUS(dist);
   }
+  void Robot_getMinDistanceUSForward(Robot* robot, double &dist)
+  {
+    robot->getMinDistanceUSForward(dist);
+  }
 }

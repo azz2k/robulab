@@ -22,11 +22,15 @@ class Robot(object):
     dist = ctypes.c_double()
     lib.Robot_getMinDistanceUS(self.obj, ctypes.byref(dist))
     return dist.value
+  def getMinDistanceUSForward(self):
+    dist = ctypes.c_double()
+    lib.Robot_getMinDistanceUSForward(self.obj, ctypes.byref(dist))
+    return dist.value
 
 if __name__ == "__main__":
   robot = Robot()
   for i in range(100):
-    dist = robot.getMinDistanceUS()
+    dist = robot.getMinDistanceUSForward()
     print dist
     time.sleep(0.2)
 #  robot.move_trans(0.2, 0.2)

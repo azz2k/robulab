@@ -165,4 +165,9 @@ class Robot
       usClient->execute(); // process all messages
       dist = usClient->getMinDistance();
     }
+    void getMinDistanceUSForward(double &dist)
+    {
+      usClient->execute(); // process all messages
+      dist = usClient->getMinDistanceForward();
+    }
 };

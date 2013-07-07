@@ -147,6 +147,22 @@ public:
     return double(minDist);
   }//end getMinDistanceIdx
 
+  double getMinDistanceForward()
+  {
+    if(measurements.empty()) return -1.0;
+
+    Pure::Float32 minDist = measurements[0];
+
+    for(unsigned int i = 1; i < measurements.size(); i++)
+    {
+      // HACK: ignore measurements closer than 10cm, due to a broken sensor
+      if(measurements[i] > 0.1f && measurements[i] < minDist && fabs(properties[i].pose.rotation) < 1.0)
+      {
+        minDist = measurements[i];
+      }
+    }
+    return double(minDist);
+  }//end getMinDistanceIdx
 };
 
 #endif // _TelemeterClient_h_
