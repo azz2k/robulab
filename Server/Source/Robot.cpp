@@ -24,4 +24,8 @@ extern "C" {
   {
     robot->getCurrentPose(x, y, rot);
   }
+  void Robot_getMinDistanceUS(Robot* robot, double &dist)
+  {
+    robot->getMinDistanceUS(dist);
+  }
 }

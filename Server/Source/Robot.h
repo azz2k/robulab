@@ -160,4 +160,9 @@ class Robot
       differentialDriveClient->setSpeed(false, 0.0, 0.0);
       differentialDriveClient->execute();
     }
+    void getMinDistanceUS(double &dist)
+    {
+      usClient->execute(); // process all messages
+      dist = usClient->getMinDistance();
+    }
 };

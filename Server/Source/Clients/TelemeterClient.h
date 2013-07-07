@@ -129,6 +129,23 @@ public:
     }
     return idx;
   }//end getMinDistanceIdx
+  
+  double getMinDistance()
+  {
+    if(measurements.empty()) return -1.0;
+
+    Pure::Float32 minDist = measurements[0];
+
+    for(unsigned int i = 1; i < measurements.size(); i++)
+    {
+      // HACK: ignore measurements closer than 10cm, due to a broken sensor
+      if(measurements[i] > 0.1f && measurements[i] < minDist)
+      {
+        minDist = measurements[i];
+      }
+    }
+    return double(minDist);
+  }//end getMinDistanceIdx
 
 };
 
